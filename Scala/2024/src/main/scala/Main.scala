@@ -6,8 +6,7 @@ import scala.io.Source
 
 object AoC extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
-    //val challenge: Challenge[(Int, Int), Int] = Day1_1()
-    val challenge: Challenge[(Int, Int), Int] = Day1_2()
+    val challenge = Day2_1()
 
     (for {
       f <- file(challenge.getInputName)
