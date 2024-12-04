@@ -61,4 +61,11 @@ class SmallInputTests extends munit.FunSuite {
   checkDay2_2("Safe by removing the fourth level, 25.", List(29, 28, 27, 25, 26, 25, 22, 20), Safe)
   checkDay2_2("Safe by removing the second level, 10.", List(7, 10, 8, 10, 11), Safe)
 
+  test("[day 3][part 1]OK") {
+    val input = "xmul(2,4)%&mul[3,7]!@^do_not_mul(5,5)+mul(32,64]then(mul(11,8)mul(8,5))"
+    val actual = Day3_1().process(List(input))
+    val expected = Right(161)
+    assertEquals(actual, expected)
+  }
+
 }
