@@ -4,22 +4,20 @@ import cats.syntax.all.*
 import scala.io.Source
 
 
-object AoC extends IOApp {
+object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
-    val challenge = Day2_1()
+    val challenge = Day2_2()
 
     (for {
       f <- file(challenge.getInputName)
     } yield f
       ).use(source => challenge.parse(source).flatMap(challenge.process) match {
-      case Left(error) => {
+      case Left(error) =>
         Console.println(error.getMessage)
         IO.pure(ExitCode.Error)
-      }
-      case Right(result) => {
+      case Right(result) =>
         Console.println(result)
         IO.pure(ExitCode.Success)
-      }
     }
     )
   }
