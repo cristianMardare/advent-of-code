@@ -68,4 +68,11 @@ class SmallInputTests extends munit.FunSuite {
     assertEquals(actual, expected)
   }
 
+  test("[day 3][part 2]OK") {
+    val input = "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))"
+    val actual = Day3_2().process(List(input))
+    val expected = Right(48)
+    assertEquals(actual, expected)
+  }
+
 }
