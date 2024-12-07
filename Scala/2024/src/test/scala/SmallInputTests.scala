@@ -77,15 +77,22 @@ class SmallInputTests extends munit.FunSuite {
 
   test("[day 4][part 1]OK") {
     val input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX".split('\n').toList
-    val actual = Day4_1().process(input)
+    val actual = Day4.part1Factory().process(input)
     val expected = Right(18)
     assertEquals(actual, expected)
   }
 
   test("[day 4][part 1]OK rotations") {
     val input = "SOOSOOS\nOAOAOAO\nOOMMMOO\nSAMXMAS\nOOMMMOO\nOAOAOAO\nSOOSOOS".split('\n').toList
-    val actual = Day4_1().process(input)
+    val actual = Day4.part1Factory().process(input)
     val expected = Right(8)
+    assertEquals(actual, expected)
+  }
+
+  test("[day 4][part 2]OK") {
+    val input = "MMMSXXMASM\nMSAMXMSMSA\nAMXSXMAAMM\nMSAMASMSMX\nXMASAMXAMM\nXXAMMXXAMA\nSMSMSASXSS\nSAXAMASAAA\nMAMMMXMMMM\nMXMXAXMASX".split('\n').toList
+    val actual = Day4.part2Factory().process(input)
+    val expected = Right(9)
     assertEquals(actual, expected)
   }
 

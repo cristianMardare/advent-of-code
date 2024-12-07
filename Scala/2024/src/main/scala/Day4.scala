@@ -66,16 +66,11 @@ S.S.S.S.SS
 .X.X.XMASX
 Take a look at the little Elf's word search. How many times does XMAS appear?
  */
-case class Day4_1() extends Challenge[String, Int] {
+case class Day4(
+                 searchTarget: ListMap[Char, Int],
+                 rotations: List[(Int, Int)]) extends Challenge[String, Int] {
 
   override def getInputName: String = "day4.txt"
-  val searchTarget: ListMap[Char, Int] = ListMap(
-    ('X', 0),
-      ('M', 1),
-      ('A', 2),
-      ('S', 3),
-  )
-  val rotations: List[(Int, Int)] = pairs(Array(-1, 0, 1)).toList
 
   override def parse(s: Source): Either[Exception, List[String]] = {
     try {
@@ -147,11 +142,39 @@ case class Day4_1() extends Challenge[String, Int] {
       case _ => in.map(s => s.toCharArray).toArray
     }
   }
+  
+}
+
+object Day4 {
+  def part1Factory(): Day4 = {
+    Day4(
+      ListMap(
+        ('X', 0),
+        ('M', 1),
+        ('A', 2),
+        ('S', 3),
+      ),
+      pairs(Array(-1, 0, 1)).toList
+    )
+  }
+
+  def part2Factory(): Day4 = {
+    // TODO: still needs to include only X-shaped MASes in the solution
+    Day4(
+      ListMap(
+        ('A', 0),
+        ('M', -1),
+        ('S', 1),
+      ),
+      pairs(Array(-1, 1)).toList
+    )
+  }
 
   private def pairs[T](source: Seq[T]): Seq[(T, T)] =
     for {
       a <- source
       b <- source
     } yield (a, b)
+  
 }
 
