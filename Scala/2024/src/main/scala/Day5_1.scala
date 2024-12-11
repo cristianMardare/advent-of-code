@@ -71,8 +71,33 @@ Of course, you'll need to be careful: the actual list of page ordering rules is 
 
 Determine which updates are already in the correct order. What do you get if you add up the middle page number from those correctly-ordered updates?
  */
-case class Day5_1() extends Challenge[String, Int] {
+class Day5_1 extends BaseDay5 {
+
+  @tailrec
+  private def processRec(in: List[Int], pagesBefore: Map[Int, Set[Int]]): Boolean =
+    in match {
+      case Nil => true
+      case head :: tail => pagesBefore get head match
+        case None => processRec(tail, pagesBefore)
+        case Some(pages) =>
+          if (tail.count(i => pages contains i) > 0)
+            false
+          else processRec(tail, pagesBefore)
+    }
+
+  override def algo(in: List[List[Int]], orderingMap: Map[Int, Set[Int]], middleFn: Array[Int] => Int): Int =
+    in
+      .map(u => (u.toArray, processRec(u, orderingMap)))
+      .filter((_, v) => v)
+      .map((arr, _) => middleFn(arr))
+      .sum()
+}
+trait BaseDay5 extends Challenge[String, Int] {
   override def getInputName: String = "day5.txt"
+
+  def algo(in: List[List[Int]],
+           orderingMap: Map[Int, Set[Int]],
+           middleFn: Array[Int] => Int): Int // to be overridden in child classes
 
   override def parse(s: Source): Either[Exception, List[String]] = {
     try {
@@ -87,18 +112,6 @@ case class Day5_1() extends Challenge[String, Int] {
     val (pagesAfter, pagesBefore) = processConditions(in1)
     val updates = in2.map(s => s.split(",").map(v => v.toInt).toList)
 
-    @tailrec
-    def processRec(in: List[Int], pagesBefore: Map[Int, Set[Int]]): Boolean =
-      in match {
-        case Nil => true
-        case head:: tail => pagesBefore get head match
-          case None => processRec(tail, pagesBefore)
-          case Some(pages) =>
-            if (tail.count(i => pages contains i) > 0)
-              false
-            else processRec(tail, pagesBefore)
-      }
-
     def middle(in: Array[Int]): Int =
       if (in.length % 2 == 0)
         in(in.length / 2 - 1)
@@ -107,11 +120,7 @@ case class Day5_1() extends Challenge[String, Int] {
 
     try {
 
-      val result = updates
-        .map(u => (u.toArray, processRec(u, pagesBefore)))
-        .filter((_, v) => v)
-        .map((arr, _) => middle(arr))
-        .sum()
+      val result = algo(updates, pagesBefore, middle)
 
       Right(result)
     } catch {
