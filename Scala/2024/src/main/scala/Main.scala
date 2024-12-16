@@ -6,7 +6,7 @@ import scala.io.Source
 
 object Main extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
-    val challenge = Day6_1()
+    val challenge = Day6_2()
 
     (for {
       f <- file(challenge.getInputName)

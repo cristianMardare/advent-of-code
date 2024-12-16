@@ -1,5 +1,6 @@
+import scala.reflect.ClassTag
 
-case class Board[T](in: Array[Array[T]]) {
+case class Board[T:ClassTag](in: Array[Array[T]]) {
   def getAt(pos: Location): Option[T] = {
     if isInBounds(pos) then
       Some(in(pos.x)(pos.y))
@@ -21,14 +22,19 @@ case class Board[T](in: Array[Array[T]]) {
       this
     else
       this
-      
+
+  def copy(): Board[T] =
+    Board[T](
+      in.map(_.clone)
+    )
+
   def count(op: T => Boolean): Int = {
     var counter = 0
     for (i <- in.indices)
       for (j <- in.head.indices)
         if (op apply in(i)(j))
           counter += 1
-          
-    counter      
+
+    counter
   }
 }

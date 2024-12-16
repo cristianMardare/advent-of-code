@@ -118,4 +118,11 @@ class SmallInputTests extends munit.FunSuite {
     assertEquals(actual, expected)
   }
 
+  test("[day6][part 2]OK") {
+    val input = "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#...".split('\n').map(s => s.toCharArray.toList).toList
+    val actual = Day6_2().process(input)
+    val expected = Right(6)
+    assertEquals(actual, expected)
+  }
+
 }

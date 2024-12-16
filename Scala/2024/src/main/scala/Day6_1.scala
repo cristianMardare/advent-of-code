@@ -1,4 +1,4 @@
-import Day6_1.{Downwards, Empty, Leftwards, Movement, Obstruction, Place, Rightwards, Upwards, Visited}
+import Day6.{Downwards, Empty, Leftwards, Movement, Obstruction, Place, Rightwards, Upwards, Visited}
 
 import scala.annotation.tailrec
 import scala.io.Source
@@ -115,17 +115,24 @@ class Day6_1 extends Challenge[List[Char], Int] {
       val board = asBoard(in)
       val (start, direction) = getStartAndMovement(in).get
       val game = Game(board)
-      val _ = board.replace(start, Visited)
-      val finalBoard = game.run(start, direction)
-      val result = finalBoard.count(p => p == Visited)
 
-      Right(result)
+      game.run(start, direction) match {
+        case OutOfBounds(finalBoard) =>
+          val result = finalBoard.count {
+            case Visited(_) => true
+            case _ => false
+          }
+          Right(result)
+        case InfiniteLoop(finalBoard) => Left(Exception("Cannot finish movement because of infinite loop"))
+      }
+
+
     } catch {
       case e: Exception => Left(e)
     }
   }
 
-  private def asBoard(in: List[List[Char]]): Board[Place] = {
+  protected def asBoard(in: List[List[Char]]): Board[Place] = {
    val matrix = in.map(l => l.toArray).toArray
     val result = matrix.map(
       row => row.map(
@@ -141,7 +148,7 @@ class Day6_1 extends Challenge[List[Char], Int] {
 
   }
 
-  private def getStartAndMovement(in: List[List[Char]]): Option[(Location, Movement)] = {
+  protected def getStartAndMovement(in: List[List[Char]]): Option[(Location, Movement)] = {
     var result: Option[(Location, Movement)] = None
 
     breakable {
@@ -164,25 +171,36 @@ class Day6_1 extends Challenge[List[Char], Int] {
   }
 }
 
+trait GameOutcome[T]
+case class InfiniteLoop[T](finalBoard: Board[T]) extends GameOutcome[T]
+case class OutOfBounds[T](finalBoard: Board[T]) extends GameOutcome[T]
+
 class Game(b: Board[Place]) {
-  def run(start: Location, direction: Movement): Board[Place] = {
+  def run(start: Location, direction: Movement): GameOutcome[Place] = {
     @tailrec
-    def runRec(current: Location, dir: Movement, b: Board[Place]): Board[Place] =
+    def runRec(current: Location, dir: Movement, b: Board[Place]): GameOutcome[Place] =
       if (b.isInBounds(current)){
-        val next = dir.next(current)
-        if ((b getAt next).contains(Obstruction))
-           runRec(current, dir.rotate, b)
-        else
-          runRec(next, dir, b.replace(next, Visited))
+        b getAt current match {
+          case Some(Visited(d)) if d == dir => InfiniteLoop(b) // on an already visited place, the last direction matches the current direction (meaning a loop will follow)
+          case Some(place) =>
+              if (place == Empty)
+                b.replace(current, Visited(dir))
+              val next = dir.next(current)
+              if ((b getAt next).contains(Obstruction))
+                runRec(current, dir.rotate, b)
+              else
+                runRec(next, dir, b)
+        }
+
       }
       else
-        b
+        OutOfBounds(b)
 
     runRec(start, direction, b)
   }
 }
 
-object Day6_1 {
+object Day6 {
 
   abstract class Movement {
     def next(from: Location): Location
@@ -231,9 +249,9 @@ object Day6_1 {
 
   trait Place
   case object Obstruction extends Place
-  case object Visited extends Place
+  case class Visited(direction: Movement) extends Place
   case object Empty extends Place{
-    def toVisited: Visited.type =
-      Visited
+    def toVisited(dir: Movement): Visited =
+      Visited(dir)
   }
 }
