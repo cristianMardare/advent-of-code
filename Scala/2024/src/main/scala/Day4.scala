@@ -2,31 +2,6 @@ import scala.annotation.tailrec
 import scala.collection.immutable.ListMap
 import scala.io.Source
 
-
-case class Location(x: Int, y: Int) {
-  def translate(vector: (Int, Int), offset: Int): Location =
-    Location(
-      x + vector._1 * offset,
-      y + vector._2 * offset
-    )
-}
-case class Board[T](in: Array[Array[T]]) {
-  def getAt(pos: Location): Option[T] = {
-    if isInBounds(pos) then
-      Some(in(pos.x)(pos.y))
-    else
-      None
-  }
-
-  private def isInBounds(location: Location): Boolean = {
-    if (location._1 < 0 || location._2 < 0)
-      false
-    else if (location._1 < in.length && location._2 < in(0).length)
-      true
-    else false
-  }
-}
-
 /*
 "Looks like the Chief's not here. Next!" One of The Historians pulls out a device and pushes the only button on it. After a brief flash, you recognize the interior of the Ceres monitoring station!
 
